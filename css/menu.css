@@ -1,0 +1,90 @@
+/* ⚡️ Bottom Menu - Slim, Centered, Always Consistent */
+.bottom-menu {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 580px;
+    background: white;
+    border-top: 1px solid rgba(26, 35, 126, 0.1);
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 10px 0;
+    /* 🔽 reduced height */
+    box-sizing: border-box;
+    box-shadow: 0 6px 25px rgba(26, 35, 126, 0.15);
+    border-radius: 40px;
+    /* round pill style */
+    backdrop-filter: blur(14px);
+    z-index: 999;
+    transition: all 0.4s ease;
+}
+
+/* --- Menu Item --- */
+.menu-item {
+    text-decoration: none;
+    color: #757575;
+    text-align: center;
+    font-size: 0.85rem;
+    /* slightly smaller */
+    flex: 1;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 56px;
+}
+
+.menu-item i {
+    display: block;
+    font-size: 1.4rem;
+    /* slightly smaller icon */
+    margin-bottom: 2px;
+}
+
+.menu-item.active {
+    color: var(--royal-blue);
+    font-weight: 600;
+}
+
+.menu-item:hover {
+    color: var(--royal-blue-light);
+    transform: translateY(-2px);
+}
+
+/* 📱 Responsive adjustments (mobile view) */
+@media screen and (max-width: 600px) {
+    .bottom-menu {
+        bottom: 0;
+        width: 100%;
+        border-radius: 0;
+        /* flat on mobile */
+        box-shadow: 0 -4px 20px rgba(26, 35, 126, 0.05);
+        padding: 8px 0;
+        /* slimmer on mobile */
+    }
+
+    .menu-item {
+        font-size: 0.75rem;
+        min-width: 44px;
+    }
+
+    .menu-item i {
+        font-size: 1.2rem;
+        margin-bottom: 1px;
+    }
+}
+
+/* 🧭 Extra small screens (hide text if too narrow) */
+@media screen and (max-width: 360px) {
+    .menu-item span {
+        display: none;
+    }
+
+    .menu-item i {
+        margin-bottom: 0;
+    }
+}

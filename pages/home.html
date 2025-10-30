@@ -1,0 +1,154 @@
+<section class="page home-page">
+    <div class="iframe-container" id="dailyEmbed">
+        <iframe src="pages/daily-verse.html" frameborder="0" class="daily-verse-frame" title="Daily Verse"></iframe>
+
+        <div class="view-overlay">
+        </div>
+    </div>
+</section>
+
+<style>
+    .iframe-container {
+        position: relative;
+        width: 90%;
+        max-width: 400px;
+        height: 320px;
+        margin: 2rem auto;
+        overflow: hidden;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        cursor: pointer;
+    }
+
+    .iframe-container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    .daily-verse-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 16px;
+        overflow-y: auto;
+        pointer-events: none;
+    }
+
+    .view-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(to top, rgb(19, 10, 10), transparent);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 50px;
+        border-radius: 0 0 16px 16px;
+        pointer-events: none;
+        transition: background 0.3s ease;
+    }
+
+    .iframe-container:hover .view-overlay {
+        background: linear-gradient(to top, rgb(0, 0, 0), transparent);
+    }
+
+    .view-text {
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #ffffff00;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        padding: 6px 14px;
+        border-radius: 16px;
+        transition: color 0.4s ease;
+    }
+
+    .iframe-container:hover .view-text {
+        color: #ffffff80;
+    }
+
+    /* Morph clone base */
+    .morph-clone {
+        position: fixed;
+        z-index: 9999;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        overflow: hidden;
+        transform-origin: center top;
+        animation: morphToCenterTop 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes morphToCenterTop {
+        0% {
+            opacity: 1;
+        }
+
+        100% {
+            top: 5vh;
+            left: 50%;
+            width: 80vw;
+            height: 80vh;
+            transform: translateX(-50%) scale(1);
+            border-radius: 12px;
+            box-shadow: 0 0 60px rgba(0, 0, 0, 0.8);
+        }
+    }
+
+    /* Optional fade backdrop */
+    .fade-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 9998;
+        opacity: 0;
+        animation: fadeIn 0.5s forwards;
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+</style>
+
+<script>
+    const iframeContainer = document.getElementById("dailyEmbed");
+
+    iframeContainer.addEventListener("click", () => {
+        const rect = iframeContainer.getBoundingClientRect();
+
+        // Create backdrop fade
+        const fade = document.createElement("div");
+        fade.className = "fade-overlay";
+        document.body.appendChild(fade);
+
+        // Clone the iframe container for animation
+        const clone = iframeContainer.cloneNode(true);
+        clone.classList.add("morph-clone");
+        document.body.appendChild(clone);
+
+        // Set starting position + size
+        clone.style.top = rect.top + "px";
+        clone.style.left = rect.left + "px";
+        clone.style.width = rect.width + "px";
+        clone.style.height = rect.height + "px";
+
+        const cloneIframe = clone.querySelector("iframe");
+        if (cloneIframe) cloneIframe.style.pointerEvents = "none";
+
+        // After animation, navigate
+        setTimeout(() => {
+            fade.remove();
+            clone.remove();
+            const dailyMenu = document.querySelector('[data-page="daily-verse.html"]');
+            if (dailyMenu) {
+                dailyMenu.click();
+            } else {
+                console.warn("Daily menu button not found.");
+            }
+        }, 800);
+    });
+</script>

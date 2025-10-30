@@ -1,0 +1,143 @@
+<section id="tiltArea" class="page daily-page">
+    <div class="content">
+        <div class="header">
+            <h3 class="subtitle">VERSE OF THE DAY</h3>
+        </div>
+        <p id="verse-text" class="loading">Loading verse...</p>
+        <small id="verse-ref"></small>
+    </div>
+
+    <style>
+        /* scoped styles for the injected daily fragment */
+        #tiltArea {
+            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(20, 30, 80, 0.7), rgba(15, 10, 60, 0.8)),
+                url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80') center/cover;
+            backdrop-filter: blur(25px) saturate(160%);
+            -webkit-backdrop-filter: blur(25px) saturate(160%);
+            transition: transform 0.1s ease-out;
+            perspective: 1500px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        #tiltArea::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(45deg,
+                    rgba(255, 255, 255, 0.05) 0px,
+                    rgba(255, 255, 255, 0.05) 2px,
+                    transparent 2px,
+                    transparent 4px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        #tiltArea .content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+            padding: 30px;
+            transform: translateZ(40px);
+        }
+
+        #tiltArea .subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #verse-text {
+            font-size: 1.5rem;
+            line-height: 2;
+            font-style: italic;
+            text-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+            transition: opacity 0.35s ease;
+        }
+
+        #verse-ref {
+            display: block;
+            margin-top: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.35s ease;
+        }
+
+        .loading {
+            color: rgba(255, 255, 255, 0.7);
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.7;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 576px) {
+            #tiltArea .subtitle {
+                font-size: 1rem;
+            }
+
+            #verse-text {
+                font-size: 1.2rem;
+            }
+
+            #verse-ref {
+                font-size: 1rem;
+            }
+        }
+    </style>
+
+    <script>
+        // scoped tilt effect for the injected fragment
+        (function () {
+            const tiltArea = document.getElementById('tiltArea');
+            if (!tiltArea) return;
+
+            function handleTilt(x, y, rect) {
+                const rotateY = ((x - rect.left) / rect.width - 0.5) * 5;
+                const rotateX = ((y - rect.top) / rect.height - 0.5) * -5;
+                tiltArea.style.transform = `perspective(1500px) rotateY(${rotateY}deg) rotateX(${rotateX}deg) scale(1.02)`;
+            }
+
+            tiltArea.addEventListener('mousemove', (e) => {
+                const rect = tiltArea.getBoundingClientRect();
+                handleTilt(e.clientX, e.clientY, rect);
+            });
+
+            tiltArea.addEventListener('touchmove', (e) => {
+                const rect = tiltArea.getBoundingClientRect();
+                const touch = e.touches[0];
+                handleTilt(touch.clientX, touch.clientY, rect);
+            });
+
+            tiltArea.addEventListener('mouseleave', () => {
+                tiltArea.style.transform = 'perspective(1500px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+
+            tiltArea.addEventListener('touchend', () => {
+                tiltArea.style.transform = 'perspective(1500px) rotateY(0deg) rotateX(0deg) scale(1)';
+            });
+        })();
+    </script>
+</section>

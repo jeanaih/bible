@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bible app</title>
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/menu.css">
+
+    <!-- Google Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Serif+Pro:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* Loader styling (only for Home) */
+        #home-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #home-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        #home-loader img {
+            width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ✅ Loader (for home page only) -->
+    <div id="home-loader">
+        <img src="assets/icons/icon/life.png" alt="App Icon">
+    </div>
+
+    <div id="app">
+        <div id="content" class="content-container">
+            <!-- Content loaded by menu.js -->
+        </div>
+
+        <!-- Bottom Menu -->
+        <nav class="bottom-menu">
+            <a href="#home" class="menu-item" data-page="home.html">
+                <i class="bi bi-house-fill"></i>
+                <span>Home</span>
+            </a>
+            <a href="#bible" class="menu-item" data-page="bible.html">
+                <i class="bi bi-book-fill"></i>
+                <span>Bible</span>
+            </a>
+            <a href="#daily" class="menu-item" data-page="daily-verse.html" id="daily-btn">
+                <i class="bi bi-calendar-heart-fill"></i>
+                <span>Daily</span>
+            </a>
+            <a href="#discover" class="menu-item" data-page="discover.html">
+                <i class="bi bi-search-heart-fill"></i>
+                <span>Discover</span>
+            </a>
+            <a href="#profile" class="menu-item" data-page="profile.html">
+                <i class="bi bi-person-circle"></i> <!-- already bold variant -->
+                <span>Profile</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <!-- Action bar (visible on daily page only) -->
+    <div class="action-bar" aria-hidden="false">
+        <button id="idx-heart" class="action-icon" title="React" aria-pressed="false">
+            <i class="bi bi-heart"></i>
+        </button>
+        <button id="idx-read" class="action-icon" title="Read Full" aria-label="Read Full">
+            <i class="bi bi-book"></i>
+        </button>
+        <button id="idx-save" class="action-icon" title="Save" aria-pressed="false">
+            <i class="bi bi-bookmark"></i>
+        </button>
+    </div>
+
+    <!-- ✅ Enhanced SPA Page Loader -->
+    <script>
+        async function loadPage(pageName, forceReload = false) {
+            try {
+                const url = forceReload ? `pages/${pageName}?_=${Date.now()}` : `pages/${pageName}`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Page not found: ${pageName}`);
+                const content = await response.text();
+
+                const temp = document.createElement('div');
+                temp.innerHTML = content;
+
+                const inlineScripts = Array.from(temp.querySelectorAll('script:not([src])')).map(s => s.textContent);
+                const externalSrcs = Array.from(temp.querySelectorAll('script[src]')).map(s => s.getAttribute('src'));
+                temp.querySelectorAll('script').forEach(s => s.remove());
+
+                const container = document.getElementById('content');
+                container.innerHTML = temp.innerHTML;
+
+                // Run inline scripts
+                inlineScripts.forEach(code => {
+                    const s = document.createElement('script');
+                    s.text = code;
+                    document.body.appendChild(s);
+                    setTimeout(() => s.remove(), 0);
+                });
+
+                // Helper for script injection
+                function ensureExternalScript(src, dataName, initFn) {
+                    const existing = Array.from(document.querySelectorAll('script')).find(el =>
+                        (el.dataset && el.dataset.name === dataName) || el.getAttribute('src') === src
+                    );
+
+                    if (forceReload && existing) existing.remove();
+
+                    if (!existing || forceReload) {
+                        const s = document.createElement('script');
+                        s.src = src;
+                        if (dataName) s.dataset.name = dataName;
+                        s.onload = () => {
+                            if (initFn && typeof window[initFn] === 'function') window[initFn]();
+                        };
+                        document.body.appendChild(s);
+                    } else {
+                        if (initFn && typeof window[initFn] === 'function') window[initFn]();
+                    }
+                }
+
+                // Handle known scripts
+                externalSrcs.forEach(src => {
+                    if (src.includes('daily.js')) ensureExternalScript(src, 'daily-js', 'initDailyVerse');
+                    else if (src.includes('bible.js')) ensureExternalScript(src, 'bible-js', 'initializeBible');
+                    else ensureExternalScript(src, `ext-${src}`, null);
+                });
+
+                if (pageName === 'daily-verse.html') ensureExternalScript('js/daily.js', 'daily-js', 'initDailyVerse');
+                else if (pageName === 'bible.html') ensureExternalScript('js/bible.js', 'bible-js', 'initializeBible');
+
+                // 🔹 Save last visited page
+                localStorage.setItem('lastPage', pageName);
+
+                // Update menu highlight
+                document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+                const activeItem = document.querySelector(`.menu-item[data-page="${pageName}"]`);
+                if (activeItem) activeItem.classList.add('active');
+
+                // ✅ Show loader only if it's the home page
+                const loader = document.getElementById('home-loader');
+                if (pageName === 'home.html' && loader) {
+                    loader.classList.remove('hidden');
+                    setTimeout(() => {
+                        loader.classList.add('hidden');
+                        setTimeout(() => loader.remove(), 0);
+                    }, 2000);
+                } else if (loader) {
+                    // If not home page, just remove loader immediately
+                    loader.remove();
+                }
+
+            } catch (err) {
+                console.error('Error loading page:', err);
+                document.getElementById('content').innerHTML = '<p>Error loading page content.</p>';
+            }
+        }
+
+        // On first load → open last visited page or home
+        document.addEventListener('DOMContentLoaded', () => {
+            const last = localStorage.getItem('lastPage') || 'home.html';
+            loadPage(last);
+            document.querySelectorAll('.menu-item').forEach(item => {
+                if (item.getAttribute('data-page') === last) item.classList.add('active');
+            });
+        });
+
+        // Menu click handling - full page reload version
+        document.addEventListener('click', e => {
+            const target = e.target.closest('.menu-item');
+            if (!target) return;
+            e.preventDefault();
+
+            const page = target.getAttribute('data-page');
+            localStorage.setItem('lastPage', page);
+            window.location.href = window.location.pathname + `?page=${page}`;
+            window.location.reload();
+        });
+    </script>
+
+    <!-- ❤️ Action bar script -->
+    <script>
+        (function () {
+            const heartBtn = document.getElementById('idx-heart');
+            const readBtn = document.getElementById('idx-read');
+            const saveBtn = document.getElementById('idx-save');
+            const actionBar = document.querySelector('.action-bar');
+            const contentEl = document.getElementById('content');
+
+            function updateActionBarVisibility() {
+                const dailyVisible = !!document.querySelector('#verse-text');
+                if (!actionBar) return;
+                actionBar.style.display = dailyVisible ? 'flex' : 'none';
+            }
+
+            if (contentEl) {
+                const mo = new MutationObserver(updateActionBarVisibility);
+                mo.observe(contentEl, { childList: true, subtree: true });
+            }
+            window.addEventListener('hashchange', updateActionBarVisibility);
+            document.addEventListener('DOMContentLoaded', updateActionBarVisibility);
+            setTimeout(updateActionBarVisibility, 250);
+
+            function spawnBigHeart() {
+                const big = document.createElement('div');
+                big.className = 'big-heart';
+                big.innerHTML = '<i class="bi bi-heart-fill"></i>';
+                document.body.appendChild(big);
+                requestAnimationFrame(() => big.classList.add('show'));
+                big.addEventListener('animationend', () => big.remove(), { once: true });
+            }
+
+            heartBtn.addEventListener('click', () => {
+                const icon = heartBtn.querySelector('i');
+                const liked = heartBtn.classList.toggle('liked');
+                if (liked) {
+                    icon.classList.replace('bi-heart', 'bi-heart-fill');
+                } else {
+                    icon.classList.replace('bi-heart-fill', 'bi-heart');
+                }
+                spawnBigHeart();
+            });
+
+            saveBtn.addEventListener('click', () => {
+                const icon = saveBtn.querySelector('i');
+                const saved = saveBtn.classList.toggle('saved');
+                if (saved) {
+                    icon.classList.replace('bi-bookmark', 'bi-bookmark-fill');
+                } else {
+                    icon.classList.replace('bi-bookmark-fill', 'bi-bookmark');
+                }
+            });
+
+            readBtn.addEventListener('click', () => {
+                const bibleItem = document.querySelector('.bottom-menu a[data-page="bible.html"]');
+                if (bibleItem) bibleItem.click();
+                else location.hash = '#bible';
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
