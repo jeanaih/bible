@@ -1,0 +1,166 @@
+/* === Version Selector - Glass Design === */
+.version-trigger {
+    position: fixed;
+    top: 22px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #5a1380;
+    border-radius: 50px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    z-index: 998;
+    height: 42px;
+    min-height: 42px;
+}
+
+.version-trigger:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.version-trigger i {
+    font-size: 0.9rem;
+    transition: transform 0.3s ease;
+}
+
+.version-trigger.active i {
+    transform: rotate(180deg);
+}
+
+/* Version Modal */
+.version-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9998;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.version-modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.version-modal-content {
+    background: white;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 600px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.version-modal.active .version-modal-content {
+    transform: translateY(0);
+}
+
+.version-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.version-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.close-version-modal {
+    background: transparent;
+    border: none;
+    font-size: 1.75rem;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.close-version-modal:hover {
+    color: #1f2937;
+}
+
+.version-list {
+    overflow-y: auto;
+    padding: 12px;
+}
+
+.version-item {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.version-item:hover {
+    background: #f9fafb;
+}
+
+.version-item.active {
+    background: linear-gradient(135deg, rgba(90, 19, 128, 0.1), rgba(48, 6, 66, 0.1));
+    border: 2px solid #5a1380;
+}
+
+.version-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.version-item.active .version-name {
+    color: #5a1380;
+}
+
+.version-desc {
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+@media (min-width: 768px) {
+    .version-modal {
+        align-items: center;
+    }
+
+    .version-modal-content {
+        border-radius: 24px;
+        max-height: 80vh;
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    .version-modal.active .version-modal-content {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

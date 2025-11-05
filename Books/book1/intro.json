@@ -1,0 +1,15 @@
+{
+  "book_title": "Life Journey",
+  "sections": [
+    {
+      "section_title": "Paunang Salita",
+      "is_first_page": true,
+      "content": "Ang buhay Kristyano ay maihahalintulad sa isang <b>journey</b> - punô ng pasikut-sikot at liko, tagumpay at pagsubok. Para sa isang Kristyano, ang paglalakbay na ito ay hindi lamang tungkol sa pagdating sa isang destinasyon kundi tungkol sa malalim na pakikipaglakbay kasama ang Diyos, paglago sa pananampalataya, at pagiging higit na kawangis ni Kristo sa bawat hakbang. Maging ikaw man ay nagsisimula pa lamang sa iyong paglalakbay kasama si Kristo o matagal nang naglalakbay sa landas ng pananampalataya, darating ang mga sandali ng kawalan ng katiyakan, mga panahon ng paghihintay, at mga pagsubok na susubok sa iyong pananalig. Kaya naman, inihanda namin ang isang serye ng mga aralin - isang paglalakbay ng pagiging alagad - upang gabayan ka sa lakbayin na ito.\n\nAng mga aralin ay inayos upang maipahayag sa iyo ang sinabi ng Diyos sa Kanyang Salita sa paraang naaayon sa iba't ibang hakbang ng paglalakbay. At habang sinisimulan natin ang paglalakbay na ito nang magkasama, ang aming panalangin - na ang bawat hakbang ay magdala sa atin patungo sa isang buhay na binago ni Kristo, at nakalaan para sa Kanya.\n\nKaya't huminga nang malalim, ituon ang iyong paningin kay Hesus, at lumakad nang may pananampalataya. Isang pambihirang paglalakbay ang naghihintay sa iyo."
+    },
+    {
+      "section_title": "Gabay sa pag aaral",
+      "content_order": 2,
+      "content": "Upang lubos na maging kapaki-pakinabang ang bawat aralin, ito ay hinati sa tatlong bahagi:\nIGNITION\nTutulungan at gagabayan ka nitong magsimula sa aralin.\nMay mga nakahandang ilustrasyon at gawain na maari mong gamitin o kaya naman ay mga tanong na pwedeng pagsimulan ng interes sa gagawing pag-aaral.\nMakakatulong ito upang maihanda ang sarili sa gagawing pag-aaral na nagagalak ang puso at nananabik ang isipan.\nREFLECTION\nIto ang sentro ng aralin. Sa bahaging ito mangyayari ang malalim na usapan patungkol sa Salita ng Diyos. Maingat na pag-aralan ang bawat talataan sa Biblia at siguraduhing huminto at ibukas ang Biblia sa tuwing may mga talatang pinapabasa ang aralin.\nMISSION\nIto ay nakatuon sa aplikasyon sa nangyaring pag-aaral. Ang tunay na alagad ni Kristo ay hindi lamang nakikinig ng Salita ng Diyos ngunit nagsasagawa nito sa kanyang pang-araw-araw na gawain. Sa bahaging ito ay mas magiging personal at praktikal ang usapan upang ang mga natutunan ay maihatid sa praktikal na aplikasyon sa buhay Kristyano."
+    }
+  ]
+}

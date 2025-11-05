@@ -1,0 +1,455 @@
+<section class="page saved-page">
+    <div class="saved-header">
+        <h1><i class="bi bi-bookmark-fill"></i> Saved Verses</h1>
+    </div>
+
+    <div id="savedGrid" class="saved-grid">
+        <!-- Saved verses will be displayed here -->
+    </div>
+</section>
+
+<style>
+    .saved-page {
+        padding: 20px 16px 100px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .saved-header {
+        margin-bottom: 24px;
+    }
+
+    .saved-header h1 {
+        margin: 0;
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .saved-header h1 i {
+        color: #f59e0b;
+    }
+
+    /* Saved Grid */
+    .saved-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    @media (min-width: 768px) {
+        .saved-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .saved-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    .verse-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        height: 220px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .verse-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .verse-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+        gap: 8px;
+    }
+
+    .verse-reference {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #667eea;
+        margin: 0;
+        word-break: break-word;
+        flex: 1;
+    }
+
+    .verse-card-actions {
+        display: flex;
+        gap: 4px;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    .verse-card:hover .verse-card-actions {
+        opacity: 1;
+    }
+
+    .verse-action-btn {
+        background: transparent;
+        border: 0;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+    }
+
+    .verse-action-btn:hover {
+        background: #f3f4f6;
+        color: #1f2937;
+    }
+
+    .verse-action-btn.copy:hover {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .verse-action-btn.delete:hover {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .verse-text {
+        font-size: 0.95rem;
+        color: #4b5563;
+        line-height: 1.6;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 5;
+        line-clamp: 5;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+        flex: 1;
+    }
+
+    @media (min-width: 768px) {
+        .verse-text {
+            -webkit-line-clamp: 6;
+            line-clamp: 6;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .verse-text {
+            -webkit-line-clamp: 7;
+            line-clamp: 7;
+        }
+    }
+
+    .verse-date {
+        font-size: 0.75rem;
+        color: #9ca3af;
+        margin-top: 8px;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 60px 20px;
+        color: #9ca3af;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        margin: 0 0 8px;
+    }
+
+    .empty-state small {
+        font-size: 0.9rem;
+        color: #b0b7c3;
+    }
+
+    /* Copy notification */
+    .copy-notification {
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: #1f2937;
+        color: #ffffff;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        transition: transform 0.3s ease;
+    }
+
+    .copy-notification.show {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 640px) {
+        .saved-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .saved-grid {
+            gap: 12px;
+        }
+
+        .verse-card {
+            padding: 16px;
+            height: 200px;
+        }
+    }
+
+    @media (min-width: 641px) and (max-width: 767px) {
+        .verse-card {
+            height: 220px;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+        .verse-card {
+            height: 240px;
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .verse-card {
+            height: 260px;
+        }
+    }
+</style>
+
+<script>
+    (function () {
+        let savedVerses = JSON.parse(localStorage.getItem('savedVerses') || '[]');
+        const savedGrid = document.getElementById('savedGrid');
+
+        // Tagalog book names for checking if a book name is Tagalog
+        const tagalogBookNames = {
+            1: "Genesis", 2: "Exodo", 3: "Levitico", 4: "Mga Bilang", 5: "Deuteronomio",
+            6: "Josue", 7: "Mga Hukom", 8: "Ruth", 9: "1 Samuel", 10: "2 Samuel",
+            11: "1 Mga Hari", 12: "2 Mga Hari", 13: "1 Cronica", 14: "2 Cronica",
+            15: "Ezra", 16: "Nehemias", 17: "Ester", 18: "Job", 19: "Mga Awit",
+            20: "Mga Kawikaan", 21: "Eclesiastes", 22: "Awit ni Solomon", 23: "Isaias",
+            24: "Jeremias", 25: "Panaghoy", 26: "Ezekiel", 27: "Daniel", 28: "Oseas",
+            29: "Joel", 30: "Amos", 31: "Obadias", 32: "Jonas", 33: "Mikas",
+            34: "Nahum", 35: "Habakuk", 36: "Zefanias", 37: "Hagai", 38: "Zacarias",
+            39: "Malakias",
+            40: "Mateo", 41: "Marcos", 42: "Lucas", 43: "Juan",
+            44: "Mga Gawa", 45: "Roma", 46: "1 Corinto", 47: "2 Corinto",
+            48: "Galacia", 49: "Efeso", 50: "Filipos", 51: "Colosas",
+            52: "1 Tesalonica", 53: "2 Tesalonica", 54: "1 Timoteo",
+            55: "2 Timoteo", 56: "Tito", 57: "Filemon", 58: "Hebreo",
+            59: "Santiago", 60: "1 Pedro", 61: "2 Pedro", 62: "1 Juan",
+            63: "2 Juan", 64: "3 Juan", 65: "Judas", 66: "Pahayag"
+        };
+
+        // English book names for checking if a book name is English
+        const englishBookNames = [
+            'Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth',
+            '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra',
+            'Nehemiah', 'Esther', 'Job', 'Psalm', 'Proverbs', 'Ecclesiastes', 'Song Of Solomon',
+            'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos',
+            'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi',
+            'Matthew', 'Mark', 'Luke', 'John', 'Acts', 'Romans', '1 Corinthians', '2 Corinthians',
+            'Galatians', 'Ephesians', 'Philippians', 'Colossians', '1 Thessalonians', '2 Thessalonians',
+            '1 Timothy', '2 Timothy', 'Titus', 'Philemon', 'Hebrews', 'James', '1 Peter', '2 Peter',
+            '1 John', '2 John', '3 John', 'Jude', 'Revelation'
+        ];
+
+        // Helper function to convert book name between languages
+        function convertBookName(bookName) {
+            // Check if it's a Tagalog book name
+            const tagalogIndex = Object.values(tagalogBookNames).indexOf(bookName);
+            if (tagalogIndex >= 0) {
+                return englishBookNames[tagalogIndex];
+            }
+
+            // Check if it's an English book name
+            const englishIndex = englishBookNames.indexOf(bookName);
+            if (englishIndex >= 0) {
+                return tagalogBookNames[englishIndex + 1] || bookName;
+            }
+
+            return bookName; // Return as-is if not found
+        }
+
+        function renderVerses() {
+            if (savedVerses.length === 0) {
+                savedGrid.innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-bookmark"></i>
+            <p>No saved verses yet</p>
+            <small>Save verses from Daily or Bible page (right-click/double-tap on any verse)</small>
+          </div>
+        `;
+                return;
+            }
+
+            savedGrid.innerHTML = savedVerses.map((verse, index) => `
+        <div class="verse-card" data-index="${index}" style="cursor: pointer;" title="Click to view in Bible">
+          <div class="verse-card-header">
+            <p class="verse-reference">${escapeHtml(verse.reference || 'Unknown')}</p>
+            <div class="verse-card-actions">
+              <button class="verse-action-btn copy" data-index="${index}" title="Copy">
+                <i class="bi bi-clipboard"></i>
+              </button>
+              <button class="verse-action-btn delete" data-index="${index}" title="Remove">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+          <div class="verse-text">${escapeHtml(verse.text || '')}</div>
+          <div class="verse-date">
+            ${formatDate(verse.timestamp)}
+            <span style="color: #9ca3af; margin-left: 8px;">• Tap to view</span>
+          </div>
+        </div>
+      `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return '';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            if (diffDays < 7) return `${diffDays}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function copyVerse(index) {
+            const verse = savedVerses[index];
+            const text = `${verse.reference}\n\n${verse.text}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showCopyNotification();
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showCopyNotification();
+            });
+        }
+
+        function showCopyNotification() {
+            const notification = document.createElement('div');
+            notification.className = 'copy-notification';
+            notification.textContent = 'Copied to clipboard!';
+            document.body.appendChild(notification);
+
+            setTimeout(() => notification.classList.add('show'), 10);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        function deleteVerse(index) {
+            if (confirm('Remove this saved verse?')) {
+                savedVerses.splice(index, 1);
+                localStorage.setItem('savedVerses', JSON.stringify(savedVerses));
+                renderVerses();
+            }
+        }
+
+        function navigateToVerse(index) {
+            const verse = savedVerses[index];
+            if (!verse || !verse.reference) return;
+
+            // Parse reference: "Book Chapter:Verse" format
+            const match = verse.reference.match(/^(.+?)\s+(\d+):(\d+)$/);
+            if (!match) return;
+
+            let [, book, chapter, verseNum] = match;
+
+            // Get current Bible version to convert book name to correct language
+            const savedState = JSON.parse(localStorage.getItem('bibleState') || '{}');
+            const currentVersion = savedState.version || 'NIV';
+            const isTagalogVersion = ['MBBTAG12', 'ASND', 'CEBUANO', 'KAPAMPANGAN'].includes(currentVersion);
+
+            // Convert book name to match current Bible version language
+            // Check if book name needs conversion
+            const isBookTagalog = Object.values(tagalogBookNames).includes(book);
+            const isBookEnglish = englishBookNames.includes(book);
+
+            if (isTagalogVersion && isBookEnglish) {
+                // Bible is in Tagalog mode, convert English book to Tagalog
+                book = convertBookName(book);
+            } else if (!isTagalogVersion && isBookTagalog) {
+                // Bible is in English mode, convert Tagalog book to English
+                book = convertBookName(book);
+            }
+            // If book is already in correct language, leave as-is
+
+            // Store navigation data
+            localStorage.setItem('navigateToVerse', JSON.stringify({
+                book: book,
+                chapter: chapter,
+                verse: verseNum
+            }));
+
+            // Navigate to Bible page
+            localStorage.setItem('lastPage', 'bible.html');
+            window.location.href = window.location.pathname + '?page=bible.html';
+            window.location.reload();
+        }
+
+        // Event listeners
+        savedGrid.addEventListener('click', (e) => {
+            const copyBtn = e.target.closest('.copy');
+            const deleteBtn = e.target.closest('.delete');
+            const verseCard = e.target.closest('.verse-card');
+
+            if (copyBtn) {
+                e.stopPropagation();
+                const index = parseInt(copyBtn.dataset.index);
+                copyVerse(index);
+            } else if (deleteBtn) {
+                e.stopPropagation();
+                const index = parseInt(deleteBtn.dataset.index);
+                deleteVerse(index);
+            } else if (verseCard) {
+                // Click on card itself - navigate to verse
+                const index = parseInt(verseCard.dataset.index);
+                navigateToVerse(index);
+            }
+        });
+
+        renderVerses();
+    })();
+</script>

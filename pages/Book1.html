@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 140px;
+        }
+
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        *::-webkit-scrollbar {
+            display: none;
+        }
+
+        a,
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .toc-section .toc-link.locked {
+            color: #a0a3ad;
+            pointer-events: none;
+        }
+
+        .toc-section .toc-link.locked span:first-child {
+            background: #d5d7de !important;
+            color: #6b6f7a !important;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        button:focus-visible {
+            outline: 2px solid rgba(76, 111, 255, 0.65);
+            outline-offset: 3px;
+            box-shadow: 0 0 0 4px rgba(76, 111, 255, 0.15);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1;
+            padding: 0;
+            border-radius: 0;
+            border: none;
+            transition: transform 0.15s ease, color 0.15s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.65;
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            color: #1d4ed8;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            color: #1e3a8a;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            color: #1d4ed8;
+            transform: translateY(0);
+        }
+
+        .btn-primary::before {
+            content: none;
+        }
+
+        .btn-icon {
+            width: 46px;
+            height: 46px;
+            padding: 0;
+            font-size: 1.2rem;
+            border-radius: 0;
+            border: none;
+        }
+
+        .btn-icon svg {
+            pointer-events: none;
+            width: 1.3rem;
+            height: 1.3rem;
+            filter: drop-shadow(0 4px 6px rgba(13, 34, 94, 0.25));
+            stroke: currentColor;
+            stroke-width: 3;
+        }
+
+        .page {
+            margin-bottom: 40px;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: white;
+            display: none;
+        }
+
+        .lesson-title {
+            color: #1f3b2c;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.18), rgba(76, 175, 80, 0.08));
+            border-left: 6px solid #4CAF50;
+            border-bottom: 2px solid #4CAF50;
+            padding: 12px 16px;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 6px 12px rgba(76, 175, 80, 0.08);
+        }
+
+        .ignition-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .reflection-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .mission-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #FF9800;
+            margin: 15px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .section-label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        h1,
+        h2 {
+            color: #333;
+        }
+
+        .nav-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 12px 20px;
+            border-radius: 40px;
+            box-shadow: 0 10px 35px rgba(15, 28, 71, 0.15);
+            z-index: 1000;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(227, 230, 243, 0.9);
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+
+        #page-indicator {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: #e7f1ff;
+            border: 1px solid #cfe2ff;
+            color: #0b5ed7;
+            font-weight: 600;
+            min-width: 120px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 520px) {
+            .nav-buttons {
+                bottom: 24px;
+                padding: 6px 9px;
+                gap: 6px;
+            }
+
+            .btn-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            #page-indicator {
+                padding: 5px 11px;
+                font-size: 0.9rem;
+                min-width: 96px;
+            }
+        }
+
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+
+            .page {
+                padding: 15px;
+                margin-bottom: 30px;
+            }
+
+            .lesson-title {
+                font-size: 1rem;
+                padding: 10px 12px;
+                margin-bottom: 15px;
+            }
+
+            .ignition-box,
+            .reflection-box,
+            .mission-box,
+            .ignition-content,
+            .reflection-content,
+            .mission-content {
+                padding: 10px;
+                margin: 10px 0;
+            }
+
+            .section-label {
+                font-size: 0.9rem;
+            }
+
+            h1,
+            h2 {
+                font-size: 1.1rem;
+            }
+
+            .section-header {
+                font-size: 0.95rem;
+                padding: 8px 12px;
+                margin: 15px 0 8px;
+            }
+
+            .response-input {
+                padding: 6px 0;
+                margin: 8px 0 15px;
+                font-size: 0.9rem;
+            }
+
+            .page-image {
+                padding: 10px;
+            }
+
+            .image-container {
+                min-height: 40vh;
+                padding: 10px;
+            }
+
+            /* TOC responsive */
+            .toc-link span:first-child {
+                font-size: 0.75rem;
+                padding: 2px 6px;
+            }
+
+            .toc-link span:last-child {
+                font-size: 0.9rem;
+            }
+
+            .toc-section h3 {
+                font-size: 1rem;
+                margin-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+                font-size: 0.85rem;
+            }
+
+            .page {
+                padding: 12px;
+                margin-bottom: 25px;
+            }
+
+            .lesson-title {
+                font-size: 0.95rem;
+                padding: 8px 10px;
+                margin-bottom: 12px;
+            }
+
+            .ignition-box,
+            .reflection-box,
+            .mission-box,
+            .ignition-content,
+            .reflection-content,
+            .mission-content {
+                padding: 8px;
+                margin: 8px 0;
+            }
+
+            .section-label {
+                font-size: 0.85rem;
+            }
+
+            h1,
+            h2 {
+                font-size: 1rem;
+            }
+
+            .section-header {
+                font-size: 0.9rem;
+                padding: 6px 10px;
+                margin: 12px 0 6px;
+            }
+
+            .response-input {
+                padding: 4px 0;
+                margin: 6px 0 12px;
+                font-size: 0.85rem;
+            }
+
+            .nav-buttons {
+                bottom: 20px;
+                padding: 4px 6px;
+                gap: 4px;
+            }
+
+            .btn-icon {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            #page-indicator {
+                padding: 4px 8px;
+                font-size: 0.85rem;
+                min-width: 80px;
+            }
+
+            /* TOC more compact */
+            .toc-link {
+                gap: 6px;
+            }
+
+            .toc-link span:first-child {
+                font-size: 0.7rem;
+                padding: 1px 5px;
+            }
+
+            .toc-link span:last-child {
+                font-size: 0.85rem;
+            }
+
+            .toc-section {
+                margin-bottom: 16px;
+            }
+
+            .toc-section h3 {
+                font-size: 0.95rem;
+                margin-bottom: 8px;
+            }
+
+            .toc-section ul {
+                margin: 0;
+            }
+
+            .toc-section li {
+                margin-bottom: 6px;
+            }
+        }
+
+        .page-image {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 60vh;
+            padding: 20px;
+        }
+
+        .section-header {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin: 20px 0 10px;
+            padding: 10px 15px;
+            background: #f5f5f5;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .ignition-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .reflection-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .mission-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #FF9800;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .response-input {
+            width: 100%;
+            padding: 8px 0;
+            margin: 10px 0 20px;
+            border: none;
+            border-bottom: 2px solid #ddd;
+            outline: none;
+            resize: none;
+            overflow: hidden;
+            min-height: 1em;
+            line-height: 1.6;
+        }
+
+        .response-input:focus {
+            border-bottom-color: #4CAF50;
+        }
+
+        .intro-title {
+            padding-top: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .intro-title {
+                padding-top: 150px;
+            }
+
+            .overview-content {
+                padding-top: 150px !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="toc-toggle" aria-label="Mga Nilalaman"
+        style="position: fixed; top: 18px; left: 20px; font-size: 28px; color: #2c3e50; background:none; border:none; cursor:pointer; z-index:1100;">
+        ☰
+    </button>
+
+    <!-- Intro pages -->
+    <div id="paunang-salita" class="page"></div>
+    <div id="gabay-section" class="page"></div>
+    <div id="toc-page" class="page"></div>
+
+    <!-- Life Conversations pages -->
+    <div id="life-convo-image" class="page image-container"></div>
+    <div id="life-convo-content" class="page"></div>
+    <div id="life-convo-lesson-1" class="page"></div>
+    <div id="life-convo-lesson-2" class="page"></div>
+    <div id="life-convo-lesson-3" class="page"></div>
+    <div id="life-convo-lesson-4" class="page"></div>
+
+    <!-- Life Foundations pages -->
+    <div id="life-foundations-image" class="page image-container"></div>
+    <div id="life-foundations-content" class="page"></div>
+    <div id="life-foundations-lesson-1" class="page"></div>
+    <div id="life-foundations-lesson-2" class="page"></div>
+    <div id="life-foundations-lesson-3" class="page"></div>
+    <div id="life-foundations-lesson-4" class="page"></div>
+    <div id="life-foundations-lesson-5" class="page"></div>
+
+    <!-- Life Connect pages -->
+    <div id="life-connect-image" class="page image-container"></div>
+    <div id="life-connect-content" class="page"></div>
+    <div id="life-connect-lesson-1" class="page"></div>
+    <div id="life-connect-lesson-2" class="page"></div>
+    <div id="life-connect-lesson-3" class="page"></div>
+    <div id="life-connect-lesson-4" class="page"></div>
+    <div id="life-connect-lesson-5" class="page"></div>
+    <div id="life-connect-lesson-6" class="page"></div>
+    <div id="life-connect-pledge" class="page"></div>
+
+    <!-- Moved navigation to bottom -->
+    <div class="nav-buttons">
+        <button id="prev-btn" class="btn btn-primary btn-icon" disabled aria-label="Previous page">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <polyline points="15 5 7 12 15 19" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="sr-only">Previous page</span>
+        </button>
+        <span id="page-indicator">Page 1</span>
+        <button id="next-btn" class="btn btn-primary btn-icon" aria-label="Next page">
+            <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+                <polyline points="9 5 17 12 9 19" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="sr-only">Next page</span>
+        </button>
+    </div>
+
+    <script>
+        // Track current page
+        let currentPage = 0;
+        let highestUnlockedIndex = 0;
+        // Store lessons for table of contents
+        let lifeConvoLessons = [];
+        let lifeFoundationLessons = [];
+        let lifeConnectLessons = [];
+
+        // Updated pages array
+        const pages = [
+            'toc-page',
+            'paunang-salita',
+            'gabay-section',
+            'life-convo-image',
+            'life-convo-content',
+            'life-convo-lesson-1',
+            'life-convo-lesson-2',
+            'life-convo-lesson-3',
+            'life-convo-lesson-4',
+            'life-foundations-image',
+            'life-foundations-content',
+            'life-foundations-lesson-1',
+            'life-foundations-lesson-2',
+            'life-foundations-lesson-3',
+            'life-foundations-lesson-4',
+            'life-foundations-lesson-5',
+            'life-connect-image',
+            'life-connect-content',
+            'life-connect-lesson-1',
+            'life-connect-lesson-2',
+            'life-connect-lesson-3',
+            'life-connect-lesson-4',
+            'life-connect-lesson-5',
+            'life-connect-lesson-6',
+            'life-connect-pledge'
+        ];
+
+        const pageIndexMap = pages.reduce((map, id, index) => {
+            map[id] = index;
+            return map;
+        }, {});
+
+        highestUnlockedIndex = pageIndexMap['gabay-section'];
+
+        // Load content in order: intro -> life conversations -> life foundations
+        async function loadContent() {
+            await loadIntro();
+            await loadLifeConversations();
+            await loadLifeFoundations();
+            await loadLifeConnect();
+            showPage(currentPage); // Show first page initially
+        }
+
+        let updateTOCLinks;
+
+        function isInputComplete(element) {
+            if (!element) {
+                return true;
+            }
+
+            const tagName = element.tagName.toLowerCase();
+            if (tagName === 'textarea') {
+                return element.value.trim().length > 0;
+            }
+
+            if (element.type === 'checkbox') {
+                return element.checked;
+            }
+
+            return element.value && element.value.trim().length > 0;
+        }
+
+        function isPageComplete(pageId) {
+            if (pageId === 'toc-page' || pageId === 'paunang-salita' || pageId === 'gabay-section') {
+                return true;
+            }
+
+            const pageElement = document.getElementById(pageId);
+
+            if (!pageElement) {
+                return true;
+            }
+
+            const requiredElements = pageElement.querySelectorAll('.response-input');
+
+            if (!requiredElements.length) {
+                return true;
+            }
+
+            return Array.from(requiredElements).every(isInputComplete);
+        }
+
+        function unlockNextIfComplete(pageIndex) {
+            if (isPageComplete(pages[pageIndex])) {
+                if (pageIndex + 1 > highestUnlockedIndex) {
+                    highestUnlockedIndex = pageIndex + 1;
+                    if (typeof updateTOCLinks === 'function') {
+                        updateTOCLinks();
+                    }
+                }
+            }
+        }
+
+        function updateNavigationState() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const navButtons = document.querySelector('.nav-buttons');
+
+            if (!prevBtn || !nextBtn || !navButtons) {
+                return;
+            }
+
+            const tocToggle = document.getElementById('toc-toggle');
+            const tocHomeLink = document.getElementById('toc-home-link');
+
+            if (pages[currentPage] === 'toc-page') {
+                tocToggle.style.opacity = '0';
+                tocToggle.style.pointerEvents = 'none';
+                if (tocHomeLink) {
+                    tocHomeLink.style.opacity = '1';
+                    tocHomeLink.style.pointerEvents = 'auto';
+                }
+                prevBtn.style.visibility = 'hidden';
+                nextBtn.style.visibility = 'hidden';
+                navButtons.style.pointerEvents = 'none';
+                navButtons.style.opacity = '0';
+                navButtons.style.visibility = 'hidden';
+            } else {
+                tocToggle.style.opacity = '1';
+                tocToggle.style.pointerEvents = 'auto';
+                if (tocHomeLink) {
+                    tocHomeLink.style.opacity = '0';
+                    tocHomeLink.style.pointerEvents = 'none';
+                }
+                prevBtn.style.visibility = 'visible';
+                nextBtn.style.visibility = 'visible';
+                navButtons.style.pointerEvents = 'auto';
+                navButtons.style.opacity = '1';
+                navButtons.style.visibility = 'visible';
+                prevBtn.disabled = currentPage === 0;
+                const canProceed = isPageComplete(pages[currentPage]);
+                nextBtn.disabled = !canProceed || currentPage === pages.length - 1;
+            }
+        }
+
+        function recalcUnlockedProgress() {
+            let newHighest = pageIndexMap['gabay-section'];
+
+            for (let i = pageIndexMap['gabay-section']; i < pages.length; i++) {
+                if (isPageComplete(pages[i])) {
+                    newHighest = Math.max(newHighest, i + 1);
+                } else {
+                    break;
+                }
+            }
+
+            highestUnlockedIndex = Math.min(newHighest, pages.length - 1);
+
+            if (typeof updateTOCLinks === 'function') {
+                updateTOCLinks();
+            }
+
+            updateNavigationState();
+        }
+
+        // Navigation functions
+        function showPage(index) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+
+            // Show selected page
+            document.getElementById(pages[index]).style.display = 'block';
+
+            // Update page indicator
+            document.getElementById('page-indicator').textContent = `Page ${index + 1} of ${pages.length}`;
+
+            currentPage = index;
+
+            unlockNextIfComplete(currentPage);
+            updateNavigationState();
+
+            if (typeof updateTOCLinks === 'function') {
+                updateTOCLinks();
+            }
+
+            // Ensure the viewport returns to top on page change
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        function goToPageById(pageId) {
+            const targetIndex = pageIndexMap[pageId];
+            if (targetIndex !== undefined) {
+                if (targetIndex > highestUnlockedIndex && targetIndex > pageIndexMap['gabay-section']) {
+                    if (!isPageComplete(pages[currentPage])) {
+                        alert('Tapusin muna ang kasalukuyang pahina bago magpatuloy.');
+                        return;
+                    }
+
+                    unlockNextIfComplete(currentPage);
+
+                    if (targetIndex > highestUnlockedIndex && targetIndex > pageIndexMap['gabay-section']) {
+                        alert('Hindi pa available ang pahinang iyon.');
+                        return;
+                    }
+                }
+
+                showPage(targetIndex);
+            }
+        }
+
+        function nextPage() {
+            if (currentPage < pages.length - 1) {
+                if (!isPageComplete(pages[currentPage])) {
+                    alert('Pakisagutan muna ang lahat ng kailangan sa pahinang ito.');
+                    return;
+                }
+
+                unlockNextIfComplete(currentPage);
+
+                if (currentPage + 1 <= highestUnlockedIndex || currentPage + 1 <= pageIndexMap['gabay-section']) {
+                    showPage(currentPage + 1);
+                }
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                showPage(currentPage - 1);
+            }
+        }
+
+        // Event listeners for navigation
+        document.getElementById('next-btn').addEventListener('click', nextPage);
+        document.getElementById('prev-btn').addEventListener('click', prevPage);
+        document.getElementById('toc-toggle').addEventListener('click', () => {
+            goToPageById('toc-page');
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextPage();
+            if (e.key === 'ArrowLeft') prevPage();
+        });
+
+        // Modified loadIntro function
+        async function loadIntro() {
+            try {
+                const response = await fetch('../Books/book1/intro.json');
+                const data = await response.json();
+
+                // Split content at every period and create paragraphs
+                const paragraphs = data.sections[0].content
+                    .replace("Ang buhay Kristyano ay maihahalintulad sa isang journey - punô ng pasikut-sikot at liko, tagumpay at pagsubok.\n\nPara sa isang Kristyano, ang paglalakbay na ito ay hindi lamang tungkol sa pagdating sa isang destinasyon kundi tungkol sa malalim na pakikipaglakbay kasama ang Diyos, paglago sa pananampalataya, at pagiging higit na kawangis ni Kristo sa bawat hakbang.", "Ang buhay Kristyano ay maihahalintulad sa isang journey - punô ng pasikut-sikot at liko, tagumpay at pagsubok. Para sa isang Kristyano, ang paglalakbay na ito ay hindi lamang tungkol sa pagdating sa isang destinasyon kundi tungkol sa malalim na pakikipaglakbay kasama ang Diyos, paglago sa pananampalataya, at pagiging higit na kawangis ni Kristo sa bawat hakbang.")
+                    .split('.')
+                    .filter(sentence => sentence.trim().length > 0)
+                    .map(sentence => sentence.trim() + '.');
+
+                const formattedContent = paragraphs
+                    .map(para => `<p style="text-align: justify; margin-bottom: 15px;">${para.replace(/\n/g, ' ')}</p>`)
+                    .join('');
+
+                document.getElementById('paunang-salita').innerHTML =
+                    `<div class="intro-title" style="text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 1.2em; padding-top: 100px;">
+                        PAUNANG SALITA
+                    </div>
+                    ${formattedContent}`;
+
+                // Gabay sa pag aaral page with formatting
+                const gabayContent = data.sections[1].content
+                    .replace(/IGNITION/g, '</p><div class="ignition-box"><strong style="font-size: 1.1em;">IGNITION</strong></div><p style="text-align: justify; margin-top: 0;">')
+                    .replace(/REFLECTION/g, '</p><div class="reflection-box"><strong style="font-size: 1.1em;">REFLECTION</strong></div><p style="text-align: justify; margin-top: 0;">')
+                    .replace(/MISSION/g, '</p><div class="mission-box"><strong style="font-size: 1.1em;">MISSION</strong></div><p style="text-align: justify; margin-top: 0;">')
+                    .replace(/\.\s\n/g, '. ')
+                    .replace(/\n\n/g, '</p><p style="text-align: justify;">')
+                    .replace(/\n/g, ' ');
+
+                document.getElementById('gabay-section').innerHTML =
+                    `<div style="text-align: center; margin-bottom: 20px; font-weight: bold; font-size: 1.2em;">
+                        GABAY SA PAGAARAL
+                    </div>
+                    <p style="text-align: justify;">${gabayContent}</p>`;
+            } catch (error) {
+                console.error('Error loading intro:', error);
+            }
+        }
+
+        async function loadLifeConversations() {
+            try {
+                const response = await fetch('../Books/book1/life_conversations.json');
+                const data = await response.json();
+
+                lifeConvoLessons = data.lessons || [];
+
+                // Image page
+                document.getElementById('life-convo-image').innerHTML =
+                    `<div class="image-container">
+                        <img src="../${data.landing.image_path}" class="page-image">
+                    </div>`;
+
+                // Content page
+                document.getElementById('life-convo-content').innerHTML =
+                    `<div class="overview-content" style="padding:20px">${data.page_1.content}</div>`;
+
+                // Lesson pages - rebuild implementation
+                data.lessons.forEach((lesson, index) => {
+                    const container = document.getElementById(`life-convo-lesson-${index + 1}`);
+                    container.innerHTML = `
+                        <div style="padding:20px">
+                            <h3 class="lesson-title">Lesson ${lesson.lesson_number}: ${lesson.lesson_title}</h3>
+                            ${lesson.ignition}
+                            ${lesson.reflection}
+                            ${lesson.mission}
+                        </div>
+                    `;
+
+                    // Initialize textareas
+                    container.querySelectorAll('textarea').forEach(textarea => {
+                        const onInputAttr = textarea.getAttribute('oninput');
+                        const match = onInputAttr ? onInputAttr.match(/autoSaveResponse\("(.*?)"\)/) : null;
+                        if (match) {
+                            textarea.dataset.storageKey = match[1];
+                        }
+                        textarea.style.height = 'auto';
+                        textarea.style.height = textarea.scrollHeight + 'px';
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading life conversations:', error);
+            }
+        }
+
+        function autoSaveResponse(storageKey) {
+            const evt = window.event;
+            const element = (evt && evt.target && evt.target.matches('.response-input'))
+                ? evt.target
+                : document.querySelector(`.response-input[data-storage-key="${storageKey}"]`)
+                || document.querySelector(`.response-input[oninput*="${storageKey}"]`);
+
+            if (!element) {
+                return;
+            }
+
+            element.dataset.storageKey = storageKey;
+
+            if (element.type === 'checkbox') {
+                localStorage.setItem(storageKey, element.checked ? 'true' : 'false');
+            } else {
+                localStorage.setItem(storageKey, element.value);
+            }
+
+            if (element.tagName.toLowerCase() === 'textarea') {
+                element.style.height = 'auto';
+                element.style.height = element.scrollHeight + 'px';
+            }
+
+            unlockNextIfComplete(currentPage);
+            updateNavigationState();
+        }
+
+        async function loadLifeFoundations() {
+            try {
+                const response = await fetch('../Books/book1/life_foundations.json');
+                const data = await response.json();
+
+                lifeFoundationLessons = data.lessons || [];
+
+                // Image page
+                document.getElementById('life-foundations-image').innerHTML =
+                    `<img src="../${data.landing.image_path}" class="page-image">`;
+
+                // Content page
+                document.getElementById('life-foundations-content').innerHTML =
+                    `<div class="overview-content" style="padding:20px">${data.page_1.content}</div>`;
+
+                // Lesson pages - updated implementation
+                data.lessons.forEach((lesson, index) => {
+                    const container = document.getElementById(`life-foundations-lesson-${index + 1}`);
+                    container.innerHTML = `
+                        <div style="padding:20px">
+                            <h3 class="lesson-title">Lesson ${lesson.lesson_number}: ${lesson.lesson_title}</h3>
+                            ${lesson.ignition}
+                            ${lesson.reflection}
+                            ${lesson.mission}
+                        </div>
+                    `;
+
+                    // Initialize textareas
+                    container.querySelectorAll('textarea').forEach(textarea => {
+                        const onInputAttr = textarea.getAttribute('oninput');
+                        const match = onInputAttr ? onInputAttr.match(/autoSaveResponse\("(.*?)"\)/) : null;
+                        if (match) {
+                            textarea.dataset.storageKey = match[1];
+                        }
+                        textarea.removeAttribute('id');
+                        textarea.style.height = 'auto';
+                        textarea.style.height = textarea.scrollHeight + 'px';
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading life foundations:', error);
+            }
+        }
+
+        async function loadLifeConnect() {
+            try {
+                const response = await fetch('../Books/book1/life_connect.json');
+                const data = await response.json();
+
+                lifeConnectLessons = data.lessons || [];
+
+                // Image page
+                document.getElementById('life-connect-image').innerHTML =
+                    `<img src="../${data.landing.image_path}" class="page-image">`;
+
+                // Content page
+                document.getElementById('life-connect-content').innerHTML =
+                    `<div class="overview-content" style="padding:20px">${data.page_1.content}</div>`;
+
+                // Lesson pages
+                data.lessons.forEach((lesson, index) => {
+                    const container = document.getElementById(`life-connect-lesson-${index + 1}`);
+                    container.innerHTML = `
+                        <div style="padding:20px">
+                            <h3 class="lesson-title">Lesson ${lesson.lesson_number}: ${lesson.lesson_title}</h3>
+                            ${lesson.ignition}
+                            ${lesson.reflection}
+                            ${lesson.mission}
+                        </div>
+                    `;
+
+                    container.querySelectorAll('textarea').forEach(textarea => {
+                        const onInputAttr = textarea.getAttribute('oninput');
+                        const match = onInputAttr ? onInputAttr.match(/autoSaveResponse\("(.*?)"\)/) : null;
+                        if (match) {
+                            textarea.dataset.storageKey = match[1];
+                        }
+                        textarea.style.height = 'auto';
+                        textarea.style.height = textarea.scrollHeight + 'px';
+                    });
+                });
+
+                if (data.membership_pledge && data.membership_pledge.content) {
+                    const pledgeContainer = document.getElementById('life-connect-pledge');
+                    pledgeContainer.innerHTML = `
+                        <div style="padding:20px">
+                            <h3 class="lesson-title">${data.membership_pledge.title}</h3>
+                            ${data.membership_pledge.content}
+                        </div>
+                    `;
+                }
+
+                renderTOC();
+            } catch (error) {
+                console.error('Error loading life connect:', error);
+            }
+        }
+
+        function renderTOC() {
+            const tocContainer = document.getElementById('toc-page');
+
+            if (!tocContainer) {
+                return;
+            }
+
+            const badgeStyles = {
+                conversations: 'background:#2e7d32; color:#fff;',
+                foundations: 'background: linear-gradient(135deg, #c5e1a5, #ffeb3b); color:#1a1a1a;',
+                connect: 'background:#0d47a1; color:#fff;',
+                pledge: 'background:#455a64; color:#fff;',
+                intro: 'background:#6d4c41; color:#fff;',
+                guide: 'background:#ff7043; color:#fff;'
+            };
+
+            const sections = [
+                {
+                    title: '',
+                    items: [
+                        { label: 'Paunang Salita', target: 'paunang-salita', badge: 'Intro', badgeStyle: badgeStyles.intro },
+                        { label: 'Gabay sa Pag-aaral', target: 'gabay-section', badge: 'Gabay', badgeStyle: badgeStyles.guide }
+                    ]
+                },
+                {
+                    title: 'Life Conversations',
+                    items: [
+                        { label: 'Overview', target: 'life-convo-content', badge: 'Overview', badgeStyle: badgeStyles.conversations },
+                        ...lifeConvoLessons.map((lesson, idx) => ({
+                            label: lesson.lesson_title,
+                            target: `life-convo-lesson-${idx + 1}`,
+                            badge: `Lesson ${lesson.lesson_number}`,
+                            badgeStyle: badgeStyles.conversations
+                        }))
+                    ]
+                },
+                {
+                    title: 'Life Foundations',
+                    items: [
+                        { label: 'Overview', target: 'life-foundations-content', badge: 'Overview', badgeStyle: badgeStyles.foundations },
+                        ...lifeFoundationLessons.map((lesson, idx) => ({
+                            label: lesson.lesson_title,
+                            target: `life-foundations-lesson-${idx + 1}`,
+                            badge: `Lesson ${lesson.lesson_number}`,
+                            badgeStyle: badgeStyles.foundations
+                        }))
+                    ]
+                },
+                {
+                    title: 'Life Connect',
+                    items: [
+                        { label: 'Overview', target: 'life-connect-content', badge: 'Overview', badgeStyle: badgeStyles.connect },
+                        ...lifeConnectLessons.map((lesson, idx) => ({
+                            label: lesson.lesson_title,
+                            target: `life-connect-lesson-${idx + 1}`,
+                            badge: `Lesson ${lesson.lesson_number}`,
+                            badgeStyle: badgeStyles.connect
+                        }))
+                    ]
+                },
+                {
+                    title: 'Commitment',
+                    items: [
+                        { label: 'Membership Pledge', target: 'life-connect-pledge', badge: 'Pledge', badgeStyle: badgeStyles.pledge }
+                    ]
+                }
+            ];
+
+            const sectionHtml = sections
+                .map(section => {
+                    if (!section.items || !section.items.length) {
+                        return '';
+                    }
+
+                    const items = section.items
+                        .map(item => `
+                            <li style="margin-bottom:8px;">
+                                <a href="#" class="toc-link" data-target="${item.target}" data-required-index="${pageIndexMap[item.target] ?? -1}" style="color:#1a73e8; text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
+                                    <span style="display:inline-block; padding:2px 8px; border-radius:12px; font-size:0.85em; font-weight:600; ${item.badgeStyle}">${item.badge}</span>
+                                    <span style="font-weight:500;">${item.label}</span>
+                                </a>
+                            </li>
+                        `)
+                        .join('');
+
+                    return `
+                        <div class="toc-section" style="margin-bottom:24px;">
+                            ${section.title ? `<h3 style="margin-bottom:12px; color:#2c3e50;">${section.title}</h3>` : ''}
+                            <ul style="list-style:none; padding-left:0; margin:0;">
+                                ${items}
+                            </ul>
+                        </div>
+                    `;
+                })
+                .join('');
+
+            tocContainer.innerHTML = `
+                <div style="padding:20px">
+                    <h2 style="margin-bottom:16px; color:#2c3e50;">Mga Nilalaman</h2>
+                    <a id="toc-home-link" href="../index.html" style="position:fixed; top:18px; left:20px; color:#2c3e50; text-decoration:none; font-weight:600; display:inline-flex; align-items:center; gap:8px; z-index:1100; opacity:0; pointer-events:none;">
+                        <span style="display:inline-flex; width:32px; height:32px; border-radius:50%; background:#f1f3f8; align-items:center; justify-content:center; font-size:18px;">⟵</span>
+                        <span style="font-size:14px; letter-spacing:0.3px;"></span>
+                    </a>
+                    ${sectionHtml}
+                </div>
+            `;
+
+            const tocLinks = tocContainer.querySelectorAll('.toc-link');
+
+            const updateLinkStates = () => {
+                tocLinks.forEach(link => {
+                    const requiredIndex = parseInt(link.getAttribute('data-required-index'), 10);
+                    if (!Number.isNaN(requiredIndex) && requiredIndex > highestUnlockedIndex && requiredIndex > pageIndexMap['gabay-section']) {
+                        link.classList.add('locked');
+                    } else {
+                        link.classList.remove('locked');
+                    }
+                });
+            };
+
+            updateLinkStates();
+
+            updateTOCLinks = updateLinkStates;
+
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    goToPageById(targetId);
+                    updateLinkStates();
+                });
+            });
+
+            tocLinks.forEach(link => {
+                link.addEventListener('mouseover', () => updateLinkStates());
+                link.addEventListener('focus', () => updateLinkStates());
+            });
+
+            tocContainer.dataset.updateLinks = true;
+        }
+
+        // Initialize all textareas with saved responses
+        function initSavedResponses() {
+            document.querySelectorAll('.response-input').forEach(element => {
+                const fromDataset = element.dataset.storageKey;
+                const fromAttribute = element.getAttribute('oninput');
+                const storageKey = fromDataset || (fromAttribute ? (fromAttribute.match(/autoSaveResponse\("(.*?)"\)/) || [])[1] : undefined);
+
+                if (!storageKey) {
+                    return;
+                }
+
+                element.dataset.storageKey = storageKey;
+                const savedResponse = localStorage.getItem(storageKey);
+
+                if (savedResponse !== null) {
+                    if (element.type === 'checkbox') {
+                        element.checked = savedResponse === 'true';
+                    } else {
+                        element.value = savedResponse;
+                    }
+
+                    if (element.tagName.toLowerCase() === 'textarea') {
+                        element.style.height = 'auto';
+                        element.style.height = element.scrollHeight + 'px';
+                    }
+                } else if (element.type === 'date') {
+                    const today = new Date();
+                    const yyyy = today.getFullYear();
+                    const mm = String(today.getMonth() + 1).padStart(2, '0');
+                    const dd = String(today.getDate()).padStart(2, '0');
+                    element.value = `${yyyy}-${mm}-${dd}`;
+                }
+            });
+
+            unlockNextIfComplete(currentPage);
+            updateNavigationState();
+            if (typeof updateTOCLinks === 'function') {
+                updateTOCLinks();
+            }
+        }
+
+        // Load all content when page loads
+        window.onload = async function () {
+            await loadContent();
+            initSavedResponses();
+            recalcUnlockedProgress();
+        };
+    </script>
+</body>
+
+</html>

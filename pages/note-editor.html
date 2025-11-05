@@ -1,0 +1,616 @@
+<section class="page note-editor-page" data-theme="lined">
+  <div class="editor-header">
+    <button id="backBtn" class="icon-btn">
+      <i class="bi bi-arrow-left"></i>
+    </button>
+    <div class="header-actions">
+      <button id="themeBtn" class="icon-btn" title="Theme">
+        <i class="bi bi-palette"></i>
+      </button>
+      <button id="saveEditorBtn" class="save-btn">Done</button>
+    </div>
+  </div>
+
+  <div class="editor-toolbar">
+    <button class="tool-btn" data-command="bold" title="Bold">
+      <i class="bi bi-type-bold"></i>
+    </button>
+    <button class="tool-btn" data-command="italic" title="Italic">
+      <i class="bi bi-type-italic"></i>
+    </button>
+    <button class="tool-btn" data-command="underline" title="Underline">
+      <i class="bi bi-type-underline"></i>
+    </button>
+    <div class="divider"></div>
+    <button class="tool-btn" data-command="justifyLeft" title="Align Left">
+      <i class="bi bi-text-left"></i>
+    </button>
+    <button class="tool-btn" data-command="justifyCenter" title="Align Center">
+      <i class="bi bi-text-center"></i>
+    </button>
+    <button class="tool-btn" data-command="justifyRight" title="Align Right">
+      <i class="bi bi-text-right"></i>
+    </button>
+    <button class="tool-btn" data-command="justifyFull" title="Justify">
+      <i class="bi bi-justify"></i>
+    </button>
+    <div class="divider"></div>
+    <select id="fontSizeSelect" class="font-size-select">
+      <option value="12px">12</option>
+      <option value="14px">14</option>
+      <option value="16px" selected>16</option>
+      <option value="18px">18</option>
+      <option value="20px">20</option>
+      <option value="24px">24</option>
+      <option value="32px">32</option>
+    </select>
+  </div>
+
+  <!-- Theme Picker -->
+  <div id="themePicker" class="theme-picker">
+    <button class="theme-option" data-theme="lined" data-color="#ffffff">
+      <div class="theme-preview lined-bg"></div>
+      <span>Lined</span>
+    </button>
+    <button class="theme-option" data-theme="plain" data-color="#ffffff">
+      <div class="theme-preview" style="background: #ffffff;"></div>
+      <span>Plain</span>
+    </button>
+    <button class="theme-option" data-theme="cream" data-color="#fef3c7">
+      <div class="theme-preview" style="background: #fef3c7;"></div>
+      <span>Cream</span>
+    </button>
+    <button class="theme-option" data-theme="pink" data-color="#fce7f3">
+      <div class="theme-preview" style="background: #fce7f3;"></div>
+      <span>Pink</span>
+    </button>
+    <button class="theme-option" data-theme="blue" data-color="#dbeafe">
+      <div class="theme-preview" style="background: #dbeafe;"></div>
+      <span>Blue</span>
+    </button>
+    <button class="theme-option" data-theme="dark" data-color="#1f2937">
+      <div class="theme-preview" style="background: #1f2937;"></div>
+      <span>Dark</span>
+    </button>
+  </div>
+
+  <input type="text" id="noteTitle" class="title-input" placeholder="Title" />
+  <div id="noteContent" class="content-editor" contenteditable="true" data-placeholder="Start typing..."></div>
+</section>
+
+<style>
+  .note-editor-page {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #ffffff;
+    overflow: hidden;
+    transition: background 0.3s ease;
+  }
+
+  /* Theme Backgrounds */
+  .note-editor-page[data-theme="lined"] {
+    background: #ffffff;
+  }
+
+  .note-editor-page[data-theme="plain"] {
+    background: #ffffff;
+  }
+
+  .note-editor-page[data-theme="cream"] {
+    background: #fef3c7;
+  }
+
+  .note-editor-page[data-theme="pink"] {
+    background: #fce7f3;
+  }
+
+  .note-editor-page[data-theme="blue"] {
+    background: #dbeafe;
+  }
+
+  .note-editor-page[data-theme="dark"] {
+    background: #1f2937;
+    color: #f9fafb;
+  }
+
+  /* Lined background */
+  .note-editor-page[data-theme="lined"] .content-editor {
+    background-image: repeating-linear-gradient(transparent,
+        transparent 31px,
+        #e5e7eb 31px,
+        #e5e7eb 32px);
+    background-attachment: local;
+    padding-left: 60px;
+    position: relative;
+  }
+
+  .note-editor-page[data-theme="lined"] .content-editor::before {
+    content: '';
+    position: absolute;
+    left: 50px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #fca5a5;
+  }
+
+  .editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #f3f4f6;
+    background: inherit;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .icon-btn {
+    background: transparent;
+    border: 0;
+    color: #667eea;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .icon-btn:hover {
+    background: #f3f4f6;
+  }
+
+  .save-btn {
+    background: #667eea;
+    color: #ffffff;
+    border: 0;
+    border-radius: 50px;
+    padding: 10px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+  }
+
+  .save-btn:hover {
+    background: #5568d3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  }
+
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f3f4f6;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .tool-btn {
+    background: transparent;
+    border: 0;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 1.1rem;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .tool-btn:hover,
+  .tool-btn.active {
+    background: #f3f4f6;
+    color: #667eea;
+  }
+
+  .divider {
+    width: 1px;
+    height: 24px;
+    background: #e5e7eb;
+    margin: 0 8px;
+    flex-shrink: 0;
+  }
+
+  .font-size-select {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: #1f2937;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .font-size-select:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(103, 126, 234, 0.5);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .font-size-select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(103, 126, 234, 0.1);
+  }
+
+  .title-input {
+    border: 0;
+    border-bottom: 2px solid #f3f4f6;
+    font-size: 1.75rem;
+    font-weight: 700;
+    padding: 24px 16px 16px;
+    outline: none;
+    font-family: inherit;
+    background: transparent;
+    transition: border-color 0.2s ease;
+  }
+
+  .title-input:focus {
+    border-bottom-color: #667eea;
+  }
+
+  .title-input::placeholder {
+    color: #d1d5db;
+  }
+
+  .content-editor {
+    flex: 1;
+    padding: 0 16px 80px;
+    font-size: 1rem;
+    line-height: 1.8;
+    outline: none;
+    overflow-y: auto;
+    font-family: inherit;
+  }
+
+  .content-editor:empty:before {
+    content: attr(data-placeholder);
+    color: #d1d5db;
+  }
+
+  .content-editor:focus:before {
+    content: '';
+  }
+
+  /* Theme Picker */
+  .theme-picker {
+    position: absolute;
+    top: 60px;
+    right: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    display: none;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    z-index: 100;
+  }
+
+  .theme-picker.show {
+    display: grid;
+  }
+
+  .theme-option {
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+  }
+
+  .theme-option:hover {
+    border-color: #667eea;
+  }
+
+  .theme-option.active {
+    border-color: #667eea;
+    background: #f3f4f6;
+  }
+
+  .theme-preview {
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+  }
+
+  .lined-bg {
+    background: #ffffff;
+    background-image: repeating-linear-gradient(transparent,
+        transparent 9px,
+        #e5e7eb 9px,
+        #e5e7eb 10px);
+  }
+
+  .theme-option span {
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  /* Dark theme adjustments */
+  .note-editor-page[data-theme="dark"] .editor-header,
+  .note-editor-page[data-theme="dark"] .editor-toolbar {
+    border-color: #374151;
+  }
+
+  .note-editor-page[data-theme="dark"] .title-input,
+  .note-editor-page[data-theme="dark"] .content-editor {
+    color: #f9fafb;
+  }
+
+  .note-editor-page[data-theme="dark"] .title-input::placeholder,
+  .note-editor-page[data-theme="dark"] .content-editor:empty:before {
+    color: #9ca3af;
+  }
+
+  .note-editor-page[data-theme="dark"] .title-input {
+    border-bottom-color: #374151;
+  }
+
+  .note-editor-page[data-theme="dark"] .title-input:focus {
+    border-bottom-color: #667eea;
+  }
+
+  .note-editor-page[data-theme="dark"] .icon-btn {
+    color: #f9fafb;
+  }
+
+  .note-editor-page[data-theme="dark"] .icon-btn:hover {
+    background: #374151;
+  }
+
+  .note-editor-page[data-theme="dark"] .font-size-select {
+    background: rgba(55, 65, 81, 0.8);
+    color: #f9fafb;
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .note-editor-page[data-theme="dark"] .font-size-select:hover {
+    background: rgba(75, 85, 99, 0.9);
+  }
+
+  /* Override body dark mode - note themes should work independently */
+  body.dark-mode .note-editor-page[data-theme="lined"],
+  body.dark-mode .note-editor-page[data-theme="plain"],
+  body.dark-mode .note-editor-page[data-theme="cream"],
+  body.dark-mode .note-editor-page[data-theme="pink"],
+  body.dark-mode .note-editor-page[data-theme="blue"] {
+    background: var(--theme-bg) !important;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="lined"] {
+    --theme-bg: #ffffff;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="plain"] {
+    --theme-bg: #ffffff;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="cream"] {
+    --theme-bg: #fef3c7;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="pink"] {
+    --theme-bg: #fce7f3;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="blue"] {
+    --theme-bg: #dbeafe;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="lined"] .title-input,
+  body.dark-mode .note-editor-page[data-theme="plain"] .title-input,
+  body.dark-mode .note-editor-page[data-theme="cream"] .title-input,
+  body.dark-mode .note-editor-page[data-theme="pink"] .title-input,
+  body.dark-mode .note-editor-page[data-theme="blue"] .title-input,
+  body.dark-mode .note-editor-page[data-theme="lined"] .content-editor,
+  body.dark-mode .note-editor-page[data-theme="plain"] .content-editor,
+  body.dark-mode .note-editor-page[data-theme="cream"] .content-editor,
+  body.dark-mode .note-editor-page[data-theme="pink"] .content-editor,
+  body.dark-mode .note-editor-page[data-theme="blue"] .content-editor {
+    color: #1f2937 !important;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="lined"] .icon-btn,
+  body.dark-mode .note-editor-page[data-theme="plain"] .icon-btn,
+  body.dark-mode .note-editor-page[data-theme="cream"] .icon-btn,
+  body.dark-mode .note-editor-page[data-theme="pink"] .icon-btn,
+  body.dark-mode .note-editor-page[data-theme="blue"] .icon-btn {
+    color: #1f2937 !important;
+  }
+
+  body.dark-mode .note-editor-page[data-theme="lined"] .font-size-select,
+  body.dark-mode .note-editor-page[data-theme="plain"] .font-size-select,
+  body.dark-mode .note-editor-page[data-theme="cream"] .font-size-select,
+  body.dark-mode .note-editor-page[data-theme="pink"] .font-size-select,
+  body.dark-mode .note-editor-page[data-theme="blue"] .font-size-select {
+    color: #1f2937 !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+  }
+
+  @media (max-width: 640px) {
+    .editor-toolbar {
+      padding: 8px 12px;
+    }
+
+    .tool-btn {
+      font-size: 1rem;
+      padding: 6px 8px;
+    }
+
+    .title-input {
+      font-size: 1.5rem;
+      padding: 20px 12px 12px;
+    }
+
+    .content-editor {
+      padding: 0 12px 80px;
+    }
+
+    .theme-picker {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const editIndexParam = urlParams.get('edit');
+    const parsedIndex = editIndexParam !== null ? Number(editIndexParam) : null;
+    let currentIndex = Number.isNaN(parsedIndex) ? null : parsedIndex;
+    let notes = JSON.parse(localStorage.getItem('notes') || '[]');
+
+    const titleInput = document.getElementById('noteTitle');
+    const contentEditor = document.getElementById('noteContent');
+    const backBtn = document.getElementById('backBtn');
+    const saveBtn = document.getElementById('saveEditorBtn');
+    const fontSizeSelect = document.getElementById('fontSizeSelect');
+    const themeBtn = document.getElementById('themeBtn');
+    const themePicker = document.getElementById('themePicker');
+    const editorPage = document.querySelector('.note-editor-page');
+
+    // Hide menu when editor opens
+    const menu = document.querySelector('.bottom-menu');
+    if (menu) menu.style.display = 'none';
+
+    // Load note if editing
+    if (currentIndex !== null && notes[currentIndex]) {
+      const note = notes[currentIndex];
+      titleInput.value = note.title || '';
+      contentEditor.innerHTML = note.content || '';
+      if (note.theme) {
+        editorPage.setAttribute('data-theme', note.theme);
+      }
+    }
+
+    // Theme picker
+    themeBtn.addEventListener('click', () => {
+      themePicker.classList.toggle('show');
+    });
+
+    document.querySelectorAll('.theme-option').forEach(option => {
+      option.addEventListener('click', () => {
+        const theme = option.dataset.theme;
+        editorPage.setAttribute('data-theme', theme);
+        document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+        option.classList.add('active');
+        themePicker.classList.remove('show');
+      });
+    });
+
+    // Close theme picker when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!themeBtn.contains(e.target) && !themePicker.contains(e.target)) {
+        themePicker.classList.remove('show');
+      }
+    });
+
+    // Toolbar commands
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const command = btn.dataset.command;
+        document.execCommand(command, false, null);
+        contentEditor.focus();
+      });
+    });
+
+    // Font size
+    fontSizeSelect.addEventListener('change', (e) => {
+      document.execCommand('fontSize', false, '7');
+      const fontElements = contentEditor.querySelectorAll('font[size="7"]');
+      fontElements.forEach(el => {
+        el.removeAttribute('size');
+        el.style.fontSize = e.target.value;
+      });
+      contentEditor.focus();
+    });
+
+    // Save note
+    function saveNote(isAutoSave = false) {
+      const title = titleInput.value.trim();
+      const content = contentEditor.innerHTML.trim();
+      const theme = editorPage.getAttribute('data-theme');
+
+      if (!title && !content) {
+        if (!isAutoSave) {
+          goBack();
+        }
+        return;
+      }
+
+      if (currentIndex !== null && notes[currentIndex]) {
+        notes[currentIndex] = {
+          title,
+          content,
+          theme,
+          timestamp: Date.now()
+        };
+      } else {
+        notes.unshift({
+          title,
+          content,
+          theme,
+          timestamp: Date.now()
+        });
+        currentIndex = 0;
+      }
+
+      localStorage.setItem('notes', JSON.stringify(notes));
+      if (!isAutoSave) {
+        goBack();
+      }
+    }
+
+    function goBack() {
+      if (menu) menu.style.display = '';
+      localStorage.setItem('lastPage', 'notes.html');
+      window.location.href = window.location.pathname + '?page=notes.html';
+    }
+
+    saveBtn.addEventListener('click', () => saveNote());
+    backBtn.addEventListener('click', () => {
+      if (confirm('Discard changes?')) {
+        goBack();
+      }
+    });
+
+    // Auto-save on blur
+    let autoSaveTimeout;
+    titleInput.addEventListener('input', () => {
+      clearTimeout(autoSaveTimeout);
+      autoSaveTimeout = setTimeout(() => saveNote(true), 2000);
+    });
+    contentEditor.addEventListener('input', () => {
+      clearTimeout(autoSaveTimeout);
+      autoSaveTimeout = setTimeout(() => saveNote(true), 2000);
+    });
+
+    // Focus title on load
+    setTimeout(() => titleInput.focus(), 100);
+  })();
+</script>
